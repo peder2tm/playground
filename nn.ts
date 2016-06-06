@@ -13,6 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
+export class Global {
+	static iter;
+}
 /**
  * A node in a neural network. Each node has a state
  * (total input, output, and their respectively derivatives) which changes
@@ -133,6 +136,30 @@ export class Activations {
   public static LINEAR: ActivationFunction = {
     output: x => x,
     der: x => 1
+  };
+  public static SOFTPLUS: ActivationFunction = {
+  	output: x => {
+		//let alpha = Math.min(1,Global.iter/1);
+		let alpha = 1;
+  		return Math.log(alpha+Math.exp(x));
+  	},
+	der: x => {
+		//let alpha = Math.min(1,Global.iter/1);
+		let alpha = 1;
+		return 1 / (1 + alpha*Math.exp(-x));
+	}
+  };
+  public static SOFTPLUSSHIFT: ActivationFunction = {
+  	output: x => {
+		//let alpha = Math.min(1,Global.iter/1);
+		let alpha = 1;
+  		return Math.log(alpha+Math.exp(x+1))-1;
+  	},
+	der: x => {
+		//let alpha = Math.min(1,Global.iter/1);
+		let alpha = 1;
+		return 1 / (1 + alpha*Math.exp(-(x+1)));
+	}
   };
 }
 

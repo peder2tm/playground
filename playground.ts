@@ -164,7 +164,6 @@ let colorScale = d3.scale.linear<string>()
                      .domain([-1, 0, 1])
                      .range(["#f59322", "#e8eaeb", "#0877bd"])
                      .clamp(true);
-let iter = 0;
 let trainData: Example2D[] = [];
 let testData: Example2D[] = [];
 let network: nn.Node[][] = null;
@@ -369,7 +368,7 @@ function updateWeightsUI(network: nn.Node[][], container: d3.Selection<any>) {
         let link = node.inputLinks[j];
         container.select(`#link${link.source.id}-${link.dest.id}`)
             .style({
-              "stroke-dashoffset": -iter / 3,
+              "stroke-dashoffset": -nn.Global.iter / 3,
               "stroke-width": linkWidthScale(Math.abs(link.weight)),
               "stroke": colorScale(link.weight)
             })
@@ -838,7 +837,7 @@ function updateUI(firstStep = false) {
   // Update loss and iteration number.
   d3.select("#loss-train").text(humanReadable(lossTrain));
   d3.select("#loss-test").text(humanReadable(lossTest));
-  d3.select("#iter-number").text(addCommas(zeroPad(iter)));
+  d3.select("#iter-number").text(addCommas(zeroPad(nn.Global.iter)));
   lineChart.addDataPoint([lossTrain, lossTest]);
 }
 
@@ -863,7 +862,7 @@ function constructInput(x: number, y: number): number[] {
 }
 
 function oneStep(): void {
-  iter++;
+  nn.Global.iter++;
   trainData.forEach((point, i) => {
     let input = constructInput(point.x, point.y);
     nn.forwardProp(network, input);
@@ -903,7 +902,7 @@ function reset() {
   d3.select("#num-layers").text(state.numHiddenLayers);
 
   // Make a simple network.
-  iter = 0;
+  nn.Global.iter = 0;
   let numInputs = constructInput(0 , 0).length;
   let shape = [numInputs].concat(state.networkShape).concat([1]);
   let outputActivation = (state.problem == Problem.REGRESSION) ?
